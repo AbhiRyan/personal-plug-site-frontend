@@ -1,32 +1,48 @@
 <div>
-  @switch (this.currentAuthMode) {
-  @case ('LOGIN') {
+  @switch (this.currentAuthMode) { @case ('LOGIN') {
   <h1>Login</h1>
   <button (click)="onSwitchMode()">Switch to Register</button>
   <form [formGroup]="formLogin" (ngSubmit)="onSubmit()">
     <ul>
       <li><input type="text" placeholder="Email" formControlName="email" /></li>
-      <li><input type="password" placeholder="Password" formControlName="password" /></li>
+      <li>
+        <input
+          type="password"
+          placeholder="Password"
+          formControlName="password"
+        />
+      </li>
       <li><button type="submit">Sign In</button></li>
     </ul>
   </form>
-  }
-  @case ('REGISTER') {
+  } @case ('REGISTER') {
   <h1>Register</h1>
   <button (click)="onSwitchMode()">Switch to Login</button>
   <form [formGroup]="formRegister" (ngSubmit)="onSubmit()">
     <ul>
-      <li><input type="text" placeholder="First Name" formControlName="firstName" /></li>
-      <li><input type="text" placeholder="Last Name" formControlName="lastName" /></li>
+      <li>
+        <input
+          type="text"
+          placeholder="First Name"
+          formControlName="firstName"
+        />
+      </li>
+      <li>
+        <input type="text" placeholder="Last Name" formControlName="lastName" />
+      </li>
       <li><input type="text" placeholder="Email" formControlName="email" /></li>
-      <li><input type="password" placeholder="Password" formControlName="password" /></li>
+      <li>
+        <input
+          type="password"
+          placeholder="Password"
+          formControlName="password"
+        />
+      </li>
       <li><button type="submit">Register</button></li>
     </ul>
   </form>
-  }
-  @case ('LOGGED_IN') {
+  } @case ('LOGOUT') {
   <h1>Logged In</h1>
   <button (click)="logout()">Logout</button>
-  }
-  }
+  } }
 </div>

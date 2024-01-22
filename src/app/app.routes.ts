@@ -5,6 +5,10 @@ import { AuthComponent } from './components/layouts/auth/auth.component';
 
 export const routes: Routes = [
   { path: 'auth', component: AuthComponent },
-  { path: 'user-landing', component: UserLandingComponent, canActivate: [AuthGuard] },
-  { path: '', redirectTo: '/auth', pathMatch: 'full' }
+  {
+    path: 'user-landing',
+    component: UserLandingComponent,
+    canActivate: [AuthGuard],
+  },
+  { path: '', redirectTo: '/auth', pathMatch: 'full' },
 ];

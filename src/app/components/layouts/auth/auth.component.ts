@@ -2,39 +2,47 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthMode } from '../../../enums/authMode';
 import { AuthService } from '../../../services/auth.service';
-import { AuthenticationRequestDto } from '../../../interfaces/authenticationRequestDto';
-import { RegisterRequestDto } from '../../../interfaces/registerRequestDto';
+import { AuthenticationRequestDto } from '../../../types/authenticationRequestDto';
+import { RegisterRequestDto } from '../../../types/registerRequestDto';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import {
+  loginUser,
+  logoutUser,
+  registerUser,
+} from '../../../store/auth.actions';
+import { selectIsLoggedIn } from '../../../store/auth.selectors';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './auth.component.html',
-  styleUrl: './auth.component.scss'
+  styleUrl: './auth.component.scss',
 })
 export class AuthComponent implements OnInit {
   private authService: AuthService = inject(AuthService);
   formBuilder = inject(FormBuilder);
   router = inject(Router);
+  store = inject(Store);
   currentAuthMode: AuthMode = AuthMode.login;
 
   ngOnInit(): void {
-    if (this.authService.isLoggedIn()) {
-      this.currentAuthMode = AuthMode.loggedin;
+    if (this.store.select(selectIsLoggedIn)) {
+      this.currentAuthMode = AuthMode.logout;
     }
   }
 
   formLogin = this.formBuilder.group({
     email: ['', Validators.required],
-    password: ['', Validators.required]
+    password: ['', Validators.required],
   });
 
   formRegister = this.formBuilder.group({
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
     email: ['', Validators.required],
-    password: ['', Validators.required]
+    password: ['', Validators.required],
   });
 
   public onSwitchMode(): void {
@@ -46,31 +54,36 @@ export class AuthComponent implements OnInit {
   }
 
   public logout(): void {
-    this.authService.logout();
+    this.store.dispatch(logoutUser());
     this.currentAuthMode = AuthMode.login;
   }
 
   onSubmit(): void {
     switch (this.currentAuthMode) {
       case AuthMode.login:
-        this.authService.login(this.formLogin.value as AuthenticationRequestDto);
-        this.currentAuthMode = AuthMode.loggedin;
+        this.store.dispatch(
+          loginUser({
+            authRequestDto: this.formLogin.value as AuthenticationRequestDto,
+          })
+        );
+        this.currentAuthMode = AuthMode.logout;
         console.log(this.formLogin.value);
-        this.router.navigateByUrl('/user-landing');
         break;
       case AuthMode.register:
-        this.authService.register(this.formRegister.value as RegisterRequestDto);
-        this.currentAuthMode = AuthMode.loggedin;
+        this.store.dispatch(
+          registerUser({
+            registerRequestDto: this.formRegister.value as RegisterRequestDto,
+          })
+        );
+        this.currentAuthMode = AuthMode.logout;
         console.log(this.formRegister.value);
-        this.router.navigateByUrl('/user-landing');
         break;
-      case AuthMode.loggedin:
-        console.log('Already logged in')
+      case AuthMode.logout:
+        console.log('Already logged in');
         break;
       default:
         console.error('Invalid auth mode');
         break;
     }
   }
-
 }
