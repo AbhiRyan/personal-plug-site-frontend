@@ -7,8 +7,11 @@ import {
   withHttpTransferCacheOptions,
 } from '@angular/platform-browser';
 import { provideHttpClient, withFetch } from '@angular/common/http';
-import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
+import { provideState, provideStore } from '@ngrx/store';
+import { AuthEffects } from './store/app.effects';
+import { ApiCentralEffects } from './store/api-central.effects';
+import * as fromAppRducer from './store/app.reducers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,6 +23,7 @@ export const appConfig: ApplicationConfig = {
     ),
     provideHttpClient(withFetch()),
     provideStore(),
-    provideEffects(),
+    provideState(fromAppRducer.appFeature),
+    provideEffects(AuthEffects, ApiCentralEffects),
   ],
 };

@@ -3,12 +3,8 @@ import { ApiCentralService } from '../services/api-central.service';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Router } from '@angular/router';
 import { catchError, exhaustMap, map } from 'rxjs/operators';
-import {
-  getTestString,
-  getTestStringFailure,
-  getTestStringSuccess,
-} from './api-central.actions';
 import { of } from 'rxjs';
+import { appActions } from './app.actions';
 
 @Injectable()
 export class ApiCentralEffects {
@@ -17,18 +13,16 @@ export class ApiCentralEffects {
 
   getTestString$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(getTestString),
-      exhaustMap((action) => {
+      ofType(appActions.getTestString),
+      exhaustMap(() => {
         return this.apiCentral.getTestString().pipe(
-          map((res: { testString: string }) => {
-            return getTestStringSuccess(res.testString);
+          map((res) => {
+            return appActions.getTestStringSuccess({
+              testString: res.message,
+            });
           }),
           catchError((error) => {
-            console.error(
-              'There was an error during the getTestString process',
-              error
-            );
-            return of(getTestStringFailure({ error }));
+            return of(appActions.getTestStringFailure({ error }));
           })
         );
       })

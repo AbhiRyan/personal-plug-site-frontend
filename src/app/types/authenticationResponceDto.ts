@@ -1,6 +1,6 @@
+import { User } from './user';
+
 export interface AuthenticationResponceDto {
-  firstName: string;
-  lastName: string;
-  email: string;
   token: string;
+  userDto: User;
 }
