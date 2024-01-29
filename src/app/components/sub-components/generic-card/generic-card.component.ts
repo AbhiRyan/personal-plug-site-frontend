@@ -5,8 +5,6 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './generic-card.component.html',
-  styleUrl: './generic-card.component.scss'
+  styleUrl: './generic-card.component.scss',
 })
-export class GenericCardComponent {
-
-}
+export class GenericCardComponent {}

@@ -1,3 +1,15 @@
-<div>
-    <a routerLink="/auth">Login</a>&nbsp;
-</div>
+<nav class="nav-base nav-svg">
+  <div>
+    <a style="background-color: cadetblue" routerLink="/home">Home</a>&nbsp;
+  </div>
+  <div><a style="background-color: red" routerLink="/auth">Login</a>&nbsp;</div>
+  @if (user$ | async) {
+  <div>
+    <a style="background-color: lightgreen" routerLink="/user-landing"
+      >user page</a
+    >&nbsp;
+  </div>
+  } @else {
+  <div><a style="background-color: gray">user page</a>&nbsp;</div>
+  }
+</nav>

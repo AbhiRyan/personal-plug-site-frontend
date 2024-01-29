@@ -1,28 +1,34 @@
 import { Injectable, inject } from '@angular/core';
-import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
-import { AuthService } from './services/auth.service';
+import {
+  ActivatedRouteSnapshot,
+  Router,
+  RouterStateSnapshot,
+} from '@angular/router';
+import { Observable, map } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { appFeature } from './store/app.reducers';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthGuard {
-  private authService: AuthService = inject(AuthService);
+  store = inject(Store);
   router = inject(Router);
 
-
-  canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    if (this.isLoggedin()) {
-      return true;
-    } else {
-      this.router.navigateByUrl('/auth');
-      return false;
-    }
+  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    return this.isLoggedin().pipe(
+      map((isLoggedIn) => {
+        return isLoggedIn;
+      })
+    );
   }
 
-  isLoggedin(): boolean {
-    return this.authService.currentUserSignal !== null && this.authService.currentUserSignal !== undefined;
+  isLoggedin(): Observable<boolean> {
+    return this.store.select(appFeature.selectAuthUser).pipe(
+      map((user) => {
+        console.info('[AuthGuard] user in state: ', user);
+        return !!user;
+      })
+    );
   }
 }

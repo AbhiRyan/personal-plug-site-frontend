@@ -1,40 +1,74 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { AuthMode } from '../../../enums/authMode';
-import { AuthService } from '../../../services/auth.service';
-import { AuthenticationRequestDto } from '../../../interfaces/authenticationRequestDto';
-import { RegisterRequestDto } from '../../../interfaces/registerRequestDto';
+import { AuthenticationRequestDto } from '../../../types/authenticationRequestDto';
+import { RegisterRequestDto } from '../../../types/registerRequestDto';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { appActions } from '../../../store/app.actions';
+import { map, Subscription } from 'rxjs';
+import { appFeature } from '../../../store/app.reducers';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './auth.component.html',
-  styleUrl: './auth.component.scss'
+  styleUrl: './auth.component.scss',
 })
-export class AuthComponent implements OnInit {
-  private authService: AuthService = inject(AuthService);
+export class AuthComponent implements OnInit, OnDestroy {
   formBuilder = inject(FormBuilder);
   router = inject(Router);
+  store = inject(Store);
   currentAuthMode: AuthMode = AuthMode.login;
+  private subscription: Subscription | undefined;
+  user$ = this.store.select(appFeature.selectAuthUser);
+  userName$ = this.store.select(appFeature.selectAuthUserName);
+  enabled: boolean = false;
 
   ngOnInit(): void {
-    if (this.authService.isLoggedIn()) {
-      this.currentAuthMode = AuthMode.loggedin;
+    this.subscription = this.store
+      .select(appFeature.selectAuthUser)
+      .pipe(
+        map((user) => {
+          console.log('[Auth Component] user in state: ', user);
+          if (user) {
+            this.currentAuthMode = AuthMode.logout;
+            return true;
+          }
+          this.currentAuthMode = AuthMode.login;
+          return false;
+        })
+      )
+      .subscribe();
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 
   formLogin = this.formBuilder.group({
     email: ['', Validators.required],
-    password: ['', Validators.required]
+    password: ['', Validators.required],
   });
 
   formRegister = this.formBuilder.group({
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
     email: ['', Validators.required],
-    password: ['', Validators.required]
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    validatePassword: ['', [Validators.required, this.passwordMatchValidator]],
   });
 
   public onSwitchMode(): void {
@@ -46,26 +80,32 @@ export class AuthComponent implements OnInit {
   }
 
   public logout(): void {
-    this.authService.logout();
-    this.currentAuthMode = AuthMode.login;
+    this.store.dispatch(appActions.logoutUser());
   }
 
   onSubmit(): void {
     switch (this.currentAuthMode) {
       case AuthMode.login:
-        this.authService.login(this.formLogin.value as AuthenticationRequestDto);
-        this.currentAuthMode = AuthMode.loggedin;
-        console.log(this.formLogin.value);
-        this.router.navigateByUrl('/user-landing');
+        console.log('Submitted to endpoint: ', this.formLogin.value);
+        this.store.dispatch(
+          appActions.loginUser({
+            authRequestDto: this.formLogin.value as AuthenticationRequestDto,
+          })
+        );
+        this.store
+          .select(appFeature.selectAuthUser)
+          .pipe(map((user) => console.log('user from store: ', user)));
         break;
       case AuthMode.register:
-        this.authService.register(this.formRegister.value as RegisterRequestDto);
-        this.currentAuthMode = AuthMode.loggedin;
-        console.log(this.formRegister.value);
-        this.router.navigateByUrl('/user-landing');
+        console.log('Submitted to endpoint: ', this.formRegister.value);
+        this.store.dispatch(
+          appActions.registerUser({
+            registerRequestDto: this.userDtoFromRegisterForm(this.formRegister),
+          })
+        );
         break;
-      case AuthMode.loggedin:
-        console.log('Already logged in')
+      case AuthMode.logout:
+        console.log('Already logged in');
         break;
       default:
         console.error('Invalid auth mode');
@@ -73,4 +113,26 @@ export class AuthComponent implements OnInit {
     }
   }
 
+  passwordMatchValidator(formGroup: FormGroup): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const passwordControl = formGroup.get('password');
+      const validatePasswordControl = formGroup.get('validatePassword');
+
+      if (passwordControl && validatePasswordControl) {
+        return passwordControl.value === validatePasswordControl.value
+          ? null
+          : { mismatch: true };
+      }
+      return null;
+    };
+  }
+
+  userDtoFromRegisterForm(form: FormGroup): RegisterRequestDto {
+    return {
+      firstName: form.get('firstName')?.value,
+      lastName: form.get('lastName')?.value,
+      email: form.get('email')?.value,
+      password: form.get('password')?.value,
+    };
+  }
 }
