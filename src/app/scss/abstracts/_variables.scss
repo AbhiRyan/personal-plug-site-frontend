@@ -1,0 +1,39 @@
+:root {
+  --col-primary-dark: oklch(26.48% 0.093 286.89);
+  --col-primary-medium: oklch(31% 0.08 287.77);
+  --col-tertiary-mid-light: oklch(33.36% 0.081 288.05);
+
+  --col-off-white: oklch(50.04% 0.055 290.8);
+  --col-off-white-transparent: oklch(50.04% 0.055 290.8 / 50%);
+
+  --col-font-white: oklch(100% 0 0);
+  --col-font-body-whashed: oklch(65.46% 0.034 293.42);
+
+  --col-yellow: oklch(76.86% 0.161 67.81);
+  --col-pink: oklch(68.3% 0.224 348.04);
+  --col-red: oklch(64.26% 0.1976 35.47);
+
+  --val-border-rad: 3px;
+
+  --val-defult-font-size: 1.6rem;
+
+  --defult-font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
+
+  --rowSpan-head2: head_spacer/ span 4;
+
+  --nav-button-height: 5rem;
+  --nav-button-width: 20rem;
+
+  --nav-button-hover-gradient: linear-gradient(
+    0deg,
+    var(--col-primary-medium) 0%,
+    var(--col-tertiary-mid-light) 100%
+  );
+  --nav-button-gradient: linear-gradient(
+    0deg,
+    var(--col-primary-medium) 0%,
+    var(--col-primary-medium) 100%
+  );
+}

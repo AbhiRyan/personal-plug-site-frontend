@@ -1,0 +1,163 @@
+.drop-shadow {
+  filter: drop-shadow(0 0 2rem rgba(0, 0, 0, 0.3));
+  @include respond(small-desktop) {
+    filter: drop-shadow(0 0 1.538vw rgba(0, 0, 0, 0.3));
+  }
+}
+.header {
+  overflow: hidden;
+  position: relative;
+  display: grid;
+
+  margin: 0 auto;
+}
+
+.main-headings {
+  padding-top: 12rem;
+}
+// .header {
+//   overflow: hidden;
+//   position: relative;
+//   display: grid;
+
+//   margin: 0 auto;
+//   width: 130rem;
+//   @include respond(small-desktop) {
+//     margin: 0 0;
+//     width: 100%;
+//   }
+
+//   grid-template-rows:
+//     [head_start] min-content
+//     [head_spacer] 25rem
+//     [head_text] min-content
+//     [card_section_title] min-content
+//     [card_section] min-content;
+
+//   @include respond(small-desktop) {
+//     grid-template-rows:
+//       [head_start] min-content
+//       [head_spacer] 19.23vw
+//       [head_text] min-content
+//       [card_section_title] min-content
+//       [card_section] min-content;
+//   }
+
+//   grid-template-columns: repeat(8, minmax(min-content, 1fr));
+
+//   &__text--title {
+//     color: $col-tertiary-light;
+//   }
+
+//   &__title {
+//     .break-at-900 {
+//       display: none;
+//     }
+//     @include respond(tab-port) {
+//       .break-at-900 {
+//         display: inline;
+//       }
+//     }
+//     display: inline-block;
+//     grid-row: head_start/ span 1;
+//     grid-column: 2/-1;
+//     align-self: center;
+//     //color: $col-secondary-medium;
+//   }
+
+//   &__text {
+//     grid-row: 3 / span 1;
+//     grid-column: 1 / -1;
+//     z-index: 5;
+//     display: grid;
+//     grid-gap: 4rem;
+//     grid-template-columns: 2fr minmax(min-content, 70rem) 1fr;
+//     &-content {
+//       grid-column: 2 / span 1;
+//     }
+//   }
+
+//   &__bkgrnd {
+//     overflow: hidden;
+//     &--type-logo {
+//       font-family: $FontFam-Libre;
+//       color: $col-primary;
+
+//       grid-row: head_start/ span 1;
+//       grid-column: 1/1;
+//       text-shadow: 0 0.2rem 2rem rgba(black, 0.3);
+//       @include respond(small-desktop) {
+//         text-shadow: 0 0.2rem 1.53vw rgba(black, 0.3);
+//       }
+//       line-height: 1;
+//       z-index: 1;
+//       font-size: 50rem;
+//       transform: translateX(1.5rem);
+//       @include respond(tab-land) {
+//         font-size: 41.666666666666667vw;
+//       }
+
+//       align-self: end;
+//       transform: translateX(0.02em);
+//       margin-bottom: -0.192em;
+//     }
+//     //------------------------------------------------------
+//     //------------------------------------------------------
+//     &--box {
+//       position: relative;
+//       display: block;
+//       height: 40rem;
+//       width: 100%;
+//       overflow: hidden;
+//       background-color: $col-primary;
+//       box-shadow: 0 0.2rem 2rem rgba(black, 0.3);
+//       @include respond(small-desktop) {
+//         text-shadow: 0 0.2rem 1.53vw rgba(black, 0.3);
+//       }
+//       grid-row: var(--rowSpan-head2);
+//       grid-column: 1/-1;
+//       &-no-shadow {
+//         grid-row: var(--rowSpan-head2);
+//         grid-column: 1/-1;
+//         background-color: $col-primary;
+//         z-index: 2;
+//       }
+//     }
+
+//     &-green {
+//       grid-column: 1/-1;
+//       grid-row: var(--rowSpan-head2);
+//       z-index: 3;
+//       overflow: hidden;
+//       &--clip {
+//         display: block;
+//         height: 80rem;
+//         width: 100%;
+//         background-color: $col-secondary-medium;
+//         clip-path: polygon(0% 20%, 100% 10%, 100% 100%, 0 100%);
+//         @include respond(small-desktop) {
+//           clip-path: polygon(0% 12.307vw, 100% 6.1535vw, 100% 100%, 0 100%);
+//         }
+//       }
+//     }
+
+//     &-dark-grey {
+//       grid-column: 1/-1;
+//       grid-row: var(--rowSpan-head2);
+//       z-index: 4;
+//       overflow: hidden;
+//       &--clip {
+//         display: block;
+//         height: 80rem;
+//         width: 100%;
+//         background-color: $col-primary;
+//         clip-path: polygon(0% 30%, 100% 2%, 100% 100%, 0 100%);
+//         @include respond(small-desktop) {
+//           clip-path: polygon(0% 18.46vw, 100% 1.53846vw, 100% 100%, 0 100%);
+//         }
+//       }
+//     }
+//   }
+//   //------------------------------------------------------
+//   //------------------------------------------------------
+// }

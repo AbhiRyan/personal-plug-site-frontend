@@ -1,4 +1,15 @@
-<div class="main-layout background-main">
+<div class="main-layout">
   <app-main-navbar class="nav-size"></app-main-navbar>
-  <router-outlet class="page-box"></router-outlet>
+  <router-outlet class="page-box">
+    <svg height="100%" width="100%" class="dashed-line">
+      <line
+        x1="10"
+        y1="0"
+        x2="10"
+        y2="100%"
+        style="stroke: #635e81; stroke-width: 2"
+        stroke-dasharray="12,12"
+      />
+    </svg>
+  </router-outlet>
 </div>

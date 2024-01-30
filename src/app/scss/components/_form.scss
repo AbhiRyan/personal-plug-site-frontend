@@ -1,0 +1,26 @@
+.base-form-field {
+  font-family: var(--defult-font-family);
+  display: flex;
+  font-size: 1.6rem;
+  letter-spacing: 0.1rem;
+  color: white;
+  background-color: var(--col-off-white);
+  border: none;
+  height: 2.5rem;
+  border-radius: 1.25rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  padding-left: 1.5rem;
+
+  & :last-child {
+    margin-bottom: 0;
+  }
+
+  &::placeholder {
+    color: var(--col-primary-dark);
+  }
+
+  &:focus {
+    outline: none;
+  }
+}

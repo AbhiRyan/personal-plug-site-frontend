@@ -1,14 +1,1 @@
-@import "../../../scss/common.scss";
-.main-layout {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-}
-.nav-size {
-  background-color: var(--mid-dark-blue);
-  width: 15.6rem;
-}
-
-.page-box {
-  padding-right: 3rem;
-}
+@import "../../../scss/main.scss";
