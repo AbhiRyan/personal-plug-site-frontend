@@ -1,15 +1,36 @@
-<nav class="nav-base nav-svg">
+<nav class="nav-base nav-svg nav-padding-top">
   <div>
-    <a style="background-color: cadetblue" routerLink="/home">Home</a>&nbsp;
+    <button
+      class="nav-button nav-button-icon nav-button-icon__home"
+      (click)="routerNav('/home')"
+    >
+      Home
+    </button>
   </div>
-  <div><a style="background-color: red" routerLink="/auth">Login</a>&nbsp;</div>
+  <div>
+    <button
+      class="nav-button nav-button-icon nav-button-icon__login"
+      (click)="routerNav('/auth')"
+    >
+      Login
+    </button>
+  </div>
+  <div>
+    <button
+      class="nav-button nav-button-icon nav-button-icon__admin"
+      (click)="routerNav('')"
+    >
+      Admin
+    </button>
+  </div>
   @if (user$ | async) {
   <div>
-    <a style="background-color: lightgreen" routerLink="/user-landing"
-      >user page</a
-    >&nbsp;
+    <button
+      class="nav-button nav-button-icon nav-button-icon__user-page"
+      (click)="routerNav('/user-landing')"
+    >
+      User Page
+    </button>
   </div>
-  } @else {
-  <div><a style="background-color: gray">user page</a>&nbsp;</div>
   }
 </nav>

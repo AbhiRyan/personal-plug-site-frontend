@@ -1,0 +1,25 @@
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit; /*normally not inherited, forces to inherit from body*/
+}
+
+/* Set root font size for rem*/
+html {
+  font-size: 62.5%; /*base on 16px font, basis of using rem instead of px, 1 rem = 10px*/
+  font-family: var(--defult-font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  box-sizing: border-box;
+  background-color: var(--col-primary-medium);
+}
+
+::selection {
+  background-color: var(--col-pink);
+  color: var(--col-font-white);
+}

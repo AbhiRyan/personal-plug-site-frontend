@@ -1,0 +1,25 @@
+.base-button {
+  box-sizing: border-box;
+  display: flex;
+  padding: 1rem;
+  justify-content: flex-start;
+  background-color: var(--col-primary-medium);
+  color: var(--col-font-body-whashed);
+  border: 1px solid var(--col-off-white);
+  font-size: 1.6rem;
+  border-radius: 1rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  cursor: pointer;
+  align-items: center;
+  &:hover:not(:disabled) {
+    color: var(--col-font-white);
+    box-shadow: 0 0 0 1px var(--col-off-white); // Add this line
+    background-color: var(--col-tertiary-mid-light);
+  }
+  &:disabled {
+    color: var(--col-off-white-transparent);
+    border: 1px solid var(--col-off-white-transparent);
+    background-color: transparent;
+  }
+}

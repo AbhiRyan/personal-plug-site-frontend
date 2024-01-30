@@ -1,41 +1,76 @@
 <div>
-  <h1 class="main-headings">Auth</h1>
+  <h1 class="main-headings">Authorisation</h1>
+  <p class="u-margin-bottom-small">
+    Login and gain access to the rest of the site.
+  </p>
   @switch (this.currentAuthMode) { @case ('LOGIN') {
-  <h2>Login</h2>
-  <button (click)="onSwitchMode()">Switch to Register</button>
+  <h2 class="u-margin-bottom-tiny">Login</h2>
+  <button class="base-button u-margin-bottom-tiny" (click)="onSwitchMode()">
+    Switch to Register
+  </button>
   <form [formGroup]="formLogin" (ngSubmit)="onSubmit()">
-    <ul>
-      <li><input type="text" placeholder="Email" formControlName="email" /></li>
+    <ul class="plain-list">
       <li>
         <input
+          class="base-form-field"
+          type="text"
+          placeholder="Email"
+          formControlName="email"
+        />
+      </li>
+      <li>
+        <input
+          class="base-form-field"
           type="password"
           placeholder="Password"
           formControlName="password"
         />
       </li>
       <li>
-        <button type="submit" [disabled]="formLogin.invalid">Sign In</button>
+        <button
+          class="base-button u-margin-bottom-tiny"
+          type="submit"
+          [disabled]="formLogin.invalid"
+        >
+          Sign In
+        </button>
       </li>
     </ul>
   </form>
   } @case ('REGISTER') {
-  <h2>Register</h2>
-  <button (click)="onSwitchMode()">Switch to Login</button>
+  <h2 class="u-margin-bottom-tiny">Register</h2>
+  <button class="base-button u-margin-bottom-tiny" (click)="onSwitchMode()">
+    Switch to Login
+  </button>
   <form [formGroup]="formRegister" (ngSubmit)="onSubmit()">
-    <ul>
+    <ul class="plain-list">
       <li>
         <input
+          class="base-form-field"
           type="text"
           placeholder="First Name"
           formControlName="firstName"
         />
       </li>
       <li>
-        <input type="text" placeholder="Last Name" formControlName="lastName" />
+        <input
+          class="base-form-field"
+          type="text"
+          placeholder="Last Name"
+          formControlName="lastName"
+        />
       </li>
-      <li><input type="text" placeholder="Email" formControlName="email" /></li>
       <li>
         <input
+          class="base-form-field"
+          type="text"
+          placeholder="Email"
+          formControlName="email"
+        />
+      </li>
+      <li>
+        <input
+          class="base-form-field"
           type="password"
           placeholder="Password"
           formControlName="password"
@@ -43,24 +78,30 @@
       </li>
       <li>
         <input
+          class="base-form-field"
           type="password"
           placeholder="Validate Password"
           formControlName="validatePassword"
         />
       </li>
       <li>
-        <button type="submit" [disabled]="formRegister.invalid">
+        <button
+          class="base-button u-margin-bottom-tiny"
+          type="submit"
+          [disabled]="formRegister.invalid"
+        >
           Register
         </button>
       </li>
     </ul>
   </form>
   } @case ('LOGOUT') {
-  <h2>Logged In</h2>
-  <button (click)="logout()">Logout</button>
+  <h2 class="u-margin-bottom-tiny">Logged In</h2>
+  <button class="base-button u-margin-bottom-tiny" (click)="logout()">
+    Logout
+  </button>
   } }
 </div>
 @if(user$ | async) {
-<span>{{ userName$ | async }}</span>
-} @else {
-<span>empty state</span>}
+<span>user: {{ userName$ | async }}</span>
+}

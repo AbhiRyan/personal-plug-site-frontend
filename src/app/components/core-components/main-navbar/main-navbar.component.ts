@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { CommonModule } from '@angular/common';
 import { appFeature } from '../../../store/app.reducers';
@@ -14,4 +14,9 @@ import { appFeature } from '../../../store/app.reducers';
 export class MainNavbarComponent {
   store = inject(Store);
   user$ = this.store.select(appFeature.selectAuthUser);
+  router = inject(Router);
+
+  routerNav(path: string) {
+    this.router.navigate([path]);
+  }
 }
