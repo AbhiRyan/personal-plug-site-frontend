@@ -37,11 +37,11 @@ export class AuthEffects {
       ofType(appActions.refreshSession),
       exhaustMap((action) => {
         return this.auth.reloadSessionRefresh().pipe(
-          map((res: AuthenticationResponceDto) => {
-            return appActions.loginSuccess({ user: res.userDto });
-          }),
-          catchError((error) => {
-            return of(appActions.loginFailure({ error }));
+          map((res: AuthenticationResponceDto | null) => {
+            if (res) {
+              return appActions.loginSuccess({ user: res.userDto });
+            }
+            return appActions.refreshSessionFailure();
           })
         );
       })

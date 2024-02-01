@@ -53,6 +53,10 @@ export const appReducer = createReducer(
         testString: null,
       },
     };
+  }),
+  on(appActions.refreshSessionFailure, (appState) => {
+    console.info('refresh from cookie was not loaded');
+    return { ...appState };
   })
 );
 
