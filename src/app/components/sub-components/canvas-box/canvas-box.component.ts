@@ -18,7 +18,10 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
   styleUrl: './canvas-box.component.scss',
 })
 export class CanvasBoxComponent implements OnInit {
-  @Input() scenePath = '../../../../assets/fandango_baked_03.glb';
+  @Input() glbPath: string = '../../../../assets/fandango_baked_03.glb';
+  @Input() canvasWidth: number = 800;
+  @Input() aspectRatio: number = 16 / 9;
+  @Input() backgroundTransparency: number = 0.0;
 
   private ngZone = inject(NgZone);
 
@@ -38,9 +41,8 @@ export class CanvasBoxComponent implements OnInit {
       return;
     }
 
-    const aspectRatio = 192 / 108;
     const scene = new THREE.Scene();
-    const loader = new GLTFLoader();
+    const glbLoader = new GLTFLoader();
     const clock = new THREE.Clock();
 
     let camera = new THREE.PerspectiveCamera();
@@ -48,12 +50,12 @@ export class CanvasBoxComponent implements OnInit {
 
     //define canvas size
     const canvasSizes = {
-      width: window.innerWidth,
-      height: window.innerWidth / aspectRatio,
+      width: this.canvasWidth,
+      height: this.canvasWidth / this.aspectRatio,
     };
 
-    loader.load(
-      this.scenePath,
+    glbLoader.load(
+      this.glbPath,
       function (gltf) {
         scene.add(gltf.scene);
         if (gltf.cameras[0] instanceof THREE.PerspectiveCamera) {
@@ -78,8 +80,7 @@ export class CanvasBoxComponent implements OnInit {
       canvas: canvas,
     });
     renderer.setClearColor(0xe232222, 0);
-    const scaler = 2.5;
-    renderer.setSize(canvasSizes.width / scaler, canvasSizes.height / scaler);
+    renderer.setSize(canvasSizes.width, canvasSizes.height);
     renderer.toneMapping = THREE.LinearToneMapping;
     renderer.toneMappingExposure = Math.pow(2, -10);
 
