@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable, inject } from '@angular/core';
+import { Inject, Injectable, afterNextRender, inject } from '@angular/core';
 import { AuthenticationRequestDto } from '../types/authenticationRequestDto';
 import { AuthenticationResponceDto } from '../types/authenticationResponceDto';
 import { Observable, of } from 'rxjs';
@@ -46,15 +46,7 @@ export class AuthService {
     );
   }
 
-  public checkCookie(): boolean {
-    const cookieExists: boolean = this.cookieService.check('cookie-name');
-    return cookieExists;
-  }
-
   public reloadSessionRefresh(): Observable<AuthenticationResponceDto | null> {
-    if (!this.checkCookie()) {
-      return of(null);
-    }
     return this.https.get<AuthenticationResponceDto>(
       API_URL + `/auth/user/validateTokenAndRefreshSession`,
       {

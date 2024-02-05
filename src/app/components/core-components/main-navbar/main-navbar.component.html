@@ -15,14 +15,6 @@
       Login
     </button>
   </div>
-  <div>
-    <button
-      class="nav-button nav-button-icon nav-button-icon__admin"
-      (click)="routerNav('')"
-    >
-      Admin
-    </button>
-  </div>
   @if (user$ | async) {
   <div>
     <button
@@ -30,6 +22,15 @@
       (click)="routerNav('/user-landing')"
     >
       User Page
+    </button>
+  </div>
+  } @if(isAdmin$|async) {
+  <div>
+    <button
+      class="nav-button nav-button-icon nav-button-icon__admin"
+      (click)="routerNav('/admin')"
+    >
+      Admin
     </button>
   </div>
   }

@@ -1,6 +1,13 @@
-import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
+import {
+  createFeature,
+  createReducer,
+  createSelector,
+  on,
+  select,
+} from '@ngrx/store';
 import { appActions } from './app.actions';
 import { initialState } from '../types/states/AppState';
+import { Role } from '../enums/role';
 
 export const appReducer = createReducer(
   initialState,
@@ -82,6 +89,10 @@ export const appFeature = createFeature({
     selectTestString: createSelector(
       selectAppState,
       (state) => state.apiCentralState.testString
+    ),
+    selectAuthUserIsAdmin: createSelector(
+      selectAppState,
+      (select) => select.authState.user?.role === Role.admin
     ),
   }),
 });

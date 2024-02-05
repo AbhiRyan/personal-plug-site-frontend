@@ -14,6 +14,7 @@ import { appFeature } from '../../../store/app.reducers';
 export class MainNavbarComponent {
   store = inject(Store);
   user$ = this.store.select(appFeature.selectAuthUser);
+  isAdmin$ = this.store.select(appFeature.selectAuthUserIsAdmin);
   router = inject(Router);
 
   routerNav(path: string) {
