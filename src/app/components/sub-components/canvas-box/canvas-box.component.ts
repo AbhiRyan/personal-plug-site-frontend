@@ -1,4 +1,5 @@
 import { DOCUMENT } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import {
   Component,
   Inject,
@@ -10,15 +11,22 @@ import {
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import {
+  BloomEffect,
+  EffectComposer,
+  EffectPass,
+  RenderPass,
+  SMAAEffect,
+  SMAAPreset,
+  BlendFunction,
+} from 'postprocessing';
+import { vertexShader } from './shaders/vertexShader';
+import { fragmentShader } from './shaders/fragmentShader';
 
 @Component({
   selector: 'app-canvas-box',
   standalone: true,
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './canvas-box.component.html',
   styleUrl: './canvas-box.component.scss',
 })
@@ -34,15 +42,6 @@ export class CanvasBoxComponent implements OnInit {
   @Input() exposure: number = 0;
 
   @Input() bloomEnabled: boolean = true;
-  @Input() bloomParams: {
-    strength: number;
-    radius: number;
-    threshold: number;
-  } = {
-    strength: 0.15,
-    radius: 1.0,
-    threshold: 0.8,
-  };
 
   private ngZone = inject(NgZone);
 
@@ -91,6 +90,14 @@ export class CanvasBoxComponent implements OnInit {
       antialias: true,
       canvas: canvas,
       alpha: true,
+    });
+
+    const shader = new THREE.ShaderMaterial({
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader,
+      uniforms: {
+        uTime: { value: 0 },
+      },
     });
 
     //define canvas size
@@ -143,27 +150,31 @@ export class CanvasBoxComponent implements OnInit {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    //setup bloom pass
-    const bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(canvasSizes.width, canvasSizes.height),
-      this.bloomParams.strength,
-      this.bloomParams.radius,
-      this.bloomParams.threshold
-    );
+    const bloomEffect = new BloomEffect({
+      blendFunction: BlendFunction.ADD,
+      mipmapBlur: true,
+      luminanceThreshold: 0.1,
+      luminanceSmoothing: 1.0,
+      intensity: 1.0,
+      radius: 0.23,
+      levels: 3,
+      resolutionScale: 1.0,
+    });
+
+    const smaaEffect = new SMAAEffect({
+      preset: SMAAPreset.HIGH,
+    });
 
     //setup pass composer
-    const renderScene = new RenderPass(scene, this.camera);
     const effectComposer = new EffectComposer(renderer);
+    const renderScene = new RenderPass(scene, this.camera);
+
+    const smaaPass = new EffectPass(this.camera, smaaEffect);
+    const bloomPass = new EffectPass(this.camera, bloomEffect);
     effectComposer.addPass(renderScene);
+    //needs work AO
+    effectComposer.addPass(smaaPass);
     effectComposer.addPass(bloomPass);
-
-    const outputPass = new OutputPass();
-    effectComposer.addPass(outputPass);
-
-    effectComposer.renderer.setClearColor(
-      renBackgroundColour,
-      this.backgroundTransparencyBloom
-    );
 
     this.ngZone.runOutsideAngular(() => {
       const animate = () => {
@@ -171,7 +182,6 @@ export class CanvasBoxComponent implements OnInit {
         if (this.animationMixer) {
           this.animationMixer.update(clock.getDelta());
         }
-        renderer.render(scene, this.camera);
         effectComposer.render();
       };
       animate();
