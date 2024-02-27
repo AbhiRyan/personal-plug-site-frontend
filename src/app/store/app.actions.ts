@@ -11,6 +11,7 @@ export const appActions = createActionGroup({
     loginSuccess: props<{ user: User }>(),
     logoutUser: emptyProps(),
     refreshSession: emptyProps(),
+    refreshSessionFailure: emptyProps(),
     loginFailure: props<{ error: any }>(),
     logoutFailure: props<{ error: any }>(),
     logoutSuccess: emptyProps(),

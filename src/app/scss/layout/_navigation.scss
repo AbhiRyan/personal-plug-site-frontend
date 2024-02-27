@@ -26,6 +26,9 @@
   }
 
   &-button {
+    z-index: 1;
+    position: relative;
+    overflow: hidden;
     display: flex;
     justify-content: flex-start;
     padding-left: 8rem;
@@ -47,6 +50,18 @@
 
     &:hover {
       background-color: var(--col-tertiary-mid-light);
+      &::after {
+        z-index: -1;
+        content: "";
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 6rem;
+        height: 6rem;
+        background: var(--nav-button-hover-gradient);
+        pointer-events: none; // to prevent the pseudo-element from blocking click events
+      }
     }
 
     &-icon {

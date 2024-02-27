@@ -5,13 +5,16 @@ import { AuthenticationRequestDto } from '../types/authenticationRequestDto';
 import { AuthenticationResponceDto } from '../types/authenticationResponceDto';
 import { Observable } from 'rxjs';
 import { RegisterRequestDto } from '../types/registerRequestDto';
-import { API_URL, INACTIVITY_TIMEOUT_DURATION } from '../app.constants';
+import { INACTIVITY_TIMEOUT_DURATION } from '../app.constants';
+import { environment } from '../../environments/environment';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   https = inject(HttpClient);
+  cookieService = inject(CookieService);
   private inactivityTimeout: any;
 
   constructor(@Inject(DOCUMENT) private document: Document) {
@@ -22,7 +25,7 @@ export class AuthService {
 
   public login(authRequest: AuthenticationRequestDto) {
     return this.https.post<AuthenticationResponceDto>(
-      API_URL + `/auth/user/authenticate`,
+      environment.API_URL + `/auth/user/authenticate`,
       authRequest,
       { withCredentials: true }
     );
@@ -30,7 +33,7 @@ export class AuthService {
 
   public logout(): Observable<any> {
     return this.https.post(
-      API_URL + `/auth/user/logout`,
+      environment.API_URL + `/auth/user/logout`,
       {},
       { withCredentials: true }
     );
@@ -38,15 +41,15 @@ export class AuthService {
 
   public register(regRequest: RegisterRequestDto) {
     return this.https.post<AuthenticationResponceDto>(
-      API_URL + `/auth/user/register`,
+      environment.API_URL + `/auth/user/register`,
       regRequest,
       { withCredentials: true }
     );
   }
 
-  public reloadSessionRefresh(): Observable<AuthenticationResponceDto> {
+  public reloadSessionRefresh(): Observable<AuthenticationResponceDto | null> {
     return this.https.get<AuthenticationResponceDto>(
-      API_URL + `/auth/user/validateTokenAndRefreshSession`,
+      environment.API_URL + `/auth/user/validateTokenAndRefreshSession`,
       {
         withCredentials: true,
       }

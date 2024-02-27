@@ -27,13 +27,8 @@
   --nav-button-width: 20rem;
 
   --nav-button-hover-gradient: linear-gradient(
-    0deg,
-    var(--col-primary-medium) 0%,
-    var(--col-tertiary-mid-light) 100%
-  );
-  --nav-button-gradient: linear-gradient(
-    0deg,
-    var(--col-primary-medium) 0%,
-    var(--col-primary-medium) 100%
+    to left,
+    var(--col-primary-medium) 5%,
+    var(--col-tertiary-mid-light) 70%
   );
 }

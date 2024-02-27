@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { API_URL } from '../app.constants';
+import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 import { MessageDto } from '../types/messageDto';
 
@@ -11,8 +11,11 @@ export class ApiCentralService {
   http = inject(HttpClient);
 
   public getTestString(): Observable<MessageDto> {
-    return this.http.get<MessageDto>(API_URL + `/central/test-string`, {
-      withCredentials: true,
-    });
+    return this.http.get<MessageDto>(
+      environment.API_URL + `/central/test-string`,
+      {
+        withCredentials: true,
+      }
+    );
   }
 }
