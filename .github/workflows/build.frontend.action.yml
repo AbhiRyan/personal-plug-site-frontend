@@ -15,9 +15,10 @@ jobs:
         with:
           node-version: "20.x"
 
-      - name: build
+      - name: install
         run: npm ci
+      - name: build
         run: npm run build
-      
+
       - name: test
         run: npm test
