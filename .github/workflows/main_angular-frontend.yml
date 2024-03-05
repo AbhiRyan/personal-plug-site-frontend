@@ -61,4 +61,4 @@ jobs:
           app-name: "angular-frontend"
           slot-name: "production"
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_6e8673bbd2e4456b9d15b81c4a661877 }}
-          images: "ghcr.io/abhiryan/personal-plug-site-frontend:${{ github.sha }}"
+          images: "abhiryan/personal-plug-site-frontend:${{ github.sha }}"
