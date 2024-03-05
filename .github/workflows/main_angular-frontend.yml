@@ -9,9 +9,6 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  ACR_NAME: ${{ secrets.ACR_NAME }}
-  CONTAINER_APP_NAME: ${{ secrets.CONTAINER_APP_NAME }}
-  RESOURCE_GROUP: ${{ secrets.RESOURCE_GROUP }}
 
 jobs:
   build-and-push-image:
@@ -35,6 +32,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Lowercase the repo name and username
+        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v4
@@ -49,15 +49,24 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Log in to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.SP_SECRET }}
+  deploy:
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest
+    needs: build-and-push-image
+    environment:
+      name: "prod"
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
-      - name: Build and deploy Container App
-        uses: azure/container-apps-deploy-action@v2
+    steps:
+      - name: Lowercase the repo name and username
+        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
         with:
-          acrName: ${{ env.ACR_NAME }}
-          containerAppName: ${{ env.CONTAINER_APP_NAME }}
-          resourceGroup: ${{ env.RESOURCE_GROUP }}
-          imageToDeploy: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          app-name: "angular-frontend"
+          slot-name: "production"
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_6e8673bbd2e4456b9d15b81c4a661877 }}
+          images: "ghcr.io/${{ env.REPO }}:${{ github.sha }}"
