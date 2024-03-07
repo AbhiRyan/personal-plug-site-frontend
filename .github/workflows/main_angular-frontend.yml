@@ -1,72 +1,51 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Deploy container app to Azure
+name: Build and deploy container app to Azure Web App - angular-frontend
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
 jobs:
-  build-and-push-image:
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
+  build:
+    runs-on: 'ubuntu-latest'
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - uses: actions/checkout@v2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
 
-      - name: Lowercase the repo name and username
-        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+    - name: Log in to registry
+      uses: docker/login-action@v2
+      with:
+        registry: https://ghcr.io/
+        username: ${{ secrets.AzureAppService_ContainerUsername_54a6f9b3df8d432d9f51aa2a83f11e80 }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_4f4555c5e2f24470ae061fc778102911 }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-      - name: log in to the Container registry
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v3
+      with:
+        push: true
+        tags: ghcr.io/${{ secrets.AzureAppService_ContainerUsername_54a6f9b3df8d432d9f51aa2a83f11e80 }}/abhiryan/personal-plug-site-frontend:${{ github.sha }}
+        file: ./Dockerfile
 
   deploy:
-    permissions:
-      contents: none
     runs-on: ubuntu-latest
-    needs: build-and-push-image
+    needs: build
     environment:
-      name: "prod"
+      name: 'production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: Lowercase the repo name and username
-        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: "angular-frontend"
-          slot-name: "production"
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_6e8673bbd2e4456b9d15b81c4a661877 }}
-          images: "ghcr.io/${{ env.REPO }}:main@sha256:${{ github.sha }}"
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'angular-frontend'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_028f31a6f1384113bdf92a78297989dd }}
+        images: 'ghcr.io/${{ secrets.AzureAppService_ContainerUsername_54a6f9b3df8d432d9f51aa2a83f11e80 }}/abhiryan/personal-plug-site-frontend:${{ github.sha }}'
