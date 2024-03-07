@@ -23,14 +23,14 @@ jobs:
       uses: docker/login-action@v2
       with:
         registry: https://ghcr.io/
-        username: ${{ secrets.AzureAppService_ContainerUsername_4193e90b546a451d9081363ec11a5ea8 }}
-        password: ${{ secrets.AzureAppService_ContainerPassword_2ad9b71769af4bd1a68e8278a3ae70a3 }}
+        username: ${{ secrets.AzureAppService_ContainerUsername_cc49a7c1358e4325a2b5a32ec7f71609 }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_321879ebfe334bfbabf1351e9ef0d138 }}
 
     - name: Build and push container image to registry
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: ghcr.io/${{ secrets.AzureAppService_ContainerUsername_4193e90b546a451d9081363ec11a5ea8 }}/abhiryan/personal-plug-site-frontend:${{ github.sha }}
+        tags: ghcr.io/${{ secrets.AzureAppService_ContainerUsername_cc49a7c1358e4325a2b5a32ec7f71609 }}/personal-plug-site-frontend:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
@@ -47,5 +47,5 @@ jobs:
       with:
         app-name: 'angular-frontend'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_80407e45670d4081a57639266dc6e75b }}
-        images: 'ghcr.io/${{ secrets.AzureAppService_ContainerUsername_4193e90b546a451d9081363ec11a5ea8 }}/abhiryan/personal-plug-site-frontend:${{ github.sha }}'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_6c3d177d26c747c892645da09cfa532c }}
+        images: 'ghcr.io/${{ secrets.AzureAppService_ContainerUsername_cc49a7c1358e4325a2b5a32ec7f71609 }}/personal-plug-site-frontend:${{ github.sha }}'
