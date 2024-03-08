@@ -8,8 +8,8 @@ env:
   REGISTRY: azurecr.io
   ARC_NAME: ${{ secrets.ACR_NAME }}
   IMAGE_NAME: ${{ github.repository }}
-  REGISTRY_USER: ${{ secrets.ARC_USERNAME }}
-  REGISTRY_PASSWORD: ${{ secrets.ARC_PASSWORD }}
+  REGISTRY_USER: ${{ secrets.ACR_USERNAME }}
+  REGISTRY_PASSWORD: ${{ secrets.ACR_PASSWORD }}
 
 jobs:
   build-and-push-image:
