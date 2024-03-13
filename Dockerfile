@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . ./
-RUN timeout 15m npm run build
+RUN timeout 3m npm run build
 
 FROM node:20-alpine
 WORKDIR /app
