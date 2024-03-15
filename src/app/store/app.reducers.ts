@@ -12,7 +12,6 @@ import { Role } from '../enums/role';
 export const appReducer = createReducer(
   initialState,
   on(appActions.loginSuccess, (appState, { user }) => {
-    console.info('Login success');
     return {
       ...appState,
       authState: {
@@ -23,11 +22,9 @@ export const appReducer = createReducer(
   }),
   on(appActions.loginFailure, (appState, { error }) => {
     console.error('There was an error during the login process:-', error);
-    console.error('current state: ', appState);
     return { ...appState };
   }),
   on(appActions.logoutSuccess, (appState) => {
-    console.info('Logout success');
     return {
       ...appState,
       authState: {
@@ -38,11 +35,9 @@ export const appReducer = createReducer(
   }),
   on(appActions.logoutFailure, (appState, { error }) => {
     console.error('There was an error during the logout process:-', error);
-    console.error('current state: ', appState);
     return { ...appState };
   }),
   on(appActions.getTestStringSuccess, (appState, { testString }) => {
-    console.info('Get test string success: ', testString);
     return {
       ...appState,
       apiCentralState: {
@@ -52,7 +47,7 @@ export const appReducer = createReducer(
     };
   }),
   on(appActions.getTestStringFailure, (appState, { error }) => {
-    console.info('Get test string failure: ', error);
+    console.error('Get test string failure: ', error);
     return {
       ...appState,
       apiCentralState: {
@@ -62,7 +57,6 @@ export const appReducer = createReducer(
     };
   }),
   on(appActions.refreshSessionFailure, (appState) => {
-    console.info('refresh from cookie was not loaded');
     return { ...appState };
   })
 );

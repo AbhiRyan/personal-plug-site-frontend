@@ -102,10 +102,10 @@ export class AuthComponent implements OnInit, OnDestroy {
         );
         break;
       case AuthMode.logout:
-        console.log('Already logged in');
+        console.warn('Already logged in');
         break;
       default:
-        console.error('Invalid auth mode');
+        console.warn('Invalid auth mode');
         break;
     }
   }
