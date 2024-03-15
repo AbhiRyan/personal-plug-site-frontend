@@ -40,7 +40,6 @@ export class AuthComponent implements OnInit, OnDestroy {
       .select(appFeature.selectAuthUser)
       .pipe(
         map((user) => {
-          console.log('[Auth Component] user in state: ', user);
           if (user) {
             this.currentAuthMode = AuthMode.logout;
             return true;
@@ -86,18 +85,16 @@ export class AuthComponent implements OnInit, OnDestroy {
   onSubmit(): void {
     switch (this.currentAuthMode) {
       case AuthMode.login:
-        console.log('Submitted to endpoint: ', this.formLogin.value);
         this.store.dispatch(
           appActions.loginUser({
             authRequestDto: this.formLogin.value as AuthenticationRequestDto,
           })
         );
-        this.store
-          .select(appFeature.selectAuthUser)
-          .pipe(map((user) => console.log('user from store: ', user)));
+        // this.store
+        //   .select(appFeature.selectAuthUser)
+        //   .pipe(map((user) => console.log('user from store: ', user)));
         break;
       case AuthMode.register:
-        console.log('Submitted to endpoint: ', this.formRegister.value);
         this.store.dispatch(
           appActions.registerUser({
             registerRequestDto: this.userDtoFromRegisterForm(this.formRegister),
