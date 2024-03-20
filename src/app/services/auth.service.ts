@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable, inject } from '@angular/core';
+import { Inject, Injectable, inject, signal } from '@angular/core';
 import { AuthenticationRequestDto } from '../types/authenticationRequestDto';
 import { AuthenticationResponceDto } from '../types/authenticationResponceDto';
 import { Observable } from 'rxjs';
 import { RegisterRequestDto } from '../types/registerRequestDto';
-import { INACTIVITY_TIMEOUT_DURATION } from '../app.constants';
 import { environment } from '../../environments/environment';
 import { CookieService } from 'ngx-cookie-service';
+import { AuthMode } from '../enums/authMode';
+import * as constants from '../app.constants';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,8 @@ import { CookieService } from 'ngx-cookie-service';
 export class AuthService {
   https = inject(HttpClient);
   cookieService = inject(CookieService);
+  public currentAuthMode = signal(AuthMode.login);
+  public loadingMessage = signal(constants.LOADING_MESSAGE);
   private inactivityTimeout: any;
 
   constructor(@Inject(DOCUMENT) private document: Document) {
@@ -24,6 +27,7 @@ export class AuthService {
   }
 
   public login(authRequest: AuthenticationRequestDto) {
+    this.currentAuthMode.set(AuthMode.loginLoading);
     return this.https.post<AuthenticationResponceDto>(
       environment.API_URL + `/auth/user/authenticate`,
       authRequest,
@@ -32,6 +36,7 @@ export class AuthService {
   }
 
   public logout(): Observable<any> {
+    this.currentAuthMode.set(AuthMode.logoutLoading);
     return this.https.post(
       environment.API_URL + `/auth/user/logout`,
       {},
@@ -40,6 +45,7 @@ export class AuthService {
   }
 
   public register(regRequest: RegisterRequestDto) {
+    this.currentAuthMode.set(AuthMode.registerLoading);
     return this.https.post<AuthenticationResponceDto>(
       environment.API_URL + `/auth/user/register`,
       regRequest,
@@ -61,6 +67,6 @@ export class AuthService {
 
     this.inactivityTimeout = setTimeout(() => {
       this.logout();
-    }, INACTIVITY_TIMEOUT_DURATION);
+    }, constants.INACTIVITY_TIMEOUT_DURATION);
   }
 }

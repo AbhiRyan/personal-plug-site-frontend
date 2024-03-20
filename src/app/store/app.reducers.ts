@@ -1,10 +1,4 @@
-import {
-  createFeature,
-  createReducer,
-  createSelector,
-  on,
-  select,
-} from '@ngrx/store';
+import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 import { appActions } from './app.actions';
 import { initialState } from '../types/states/AppState';
 import { Role } from '../enums/role';

@@ -6,6 +6,7 @@ import { appActions } from './app.actions';
 import { catchError, exhaustMap, map, of, tap } from 'rxjs';
 import { AuthenticationResponceDto } from '../types/authenticationResponceDto';
 import { Store } from '@ngrx/store';
+import { AuthMode } from '../enums/authMode';
 
 @Injectable()
 export class AuthEffects {
@@ -17,14 +18,17 @@ export class AuthEffects {
     this.actions$.pipe(
       ofType(appActions.loginUser),
       exhaustMap((action) => {
+        this.auth.currentAuthMode.set(AuthMode.loginLoading);
         return this.auth.login(action.authRequestDto).pipe(
           map((res: AuthenticationResponceDto) => {
+            this.auth.currentAuthMode.set(AuthMode.logout);
             return appActions.loginSuccess({ user: res.userDto });
           }),
           tap(() => {
             this.router.navigate(['/user-landing']);
           }),
           catchError((error) => {
+            this.auth.currentAuthMode.set(AuthMode.error);
             return of(appActions.loginFailure({ error }));
           })
         );
@@ -52,14 +56,17 @@ export class AuthEffects {
     this.actions$.pipe(
       ofType(appActions.registerUser),
       exhaustMap((action) => {
+        this.auth.currentAuthMode.set(AuthMode.registerLoading);
         return this.auth.register(action.registerRequestDto).pipe(
           map((res: AuthenticationResponceDto) => {
+            this.auth.currentAuthMode.set(AuthMode.logout);
             return appActions.loginSuccess({ user: res.userDto });
           }),
           tap(() => {
             this.router.navigate(['/user-landing']);
           }),
           catchError((error) => {
+            this.auth.currentAuthMode.set(AuthMode.error);
             return of(appActions.loginFailure({ error }));
           })
         );
@@ -76,6 +83,7 @@ export class AuthEffects {
             return appActions.logoutSuccess();
           }),
           catchError((error) => {
+            this.auth.currentAuthMode.set(AuthMode.error);
             return of(appActions.logoutFailure({ error }));
           })
         );

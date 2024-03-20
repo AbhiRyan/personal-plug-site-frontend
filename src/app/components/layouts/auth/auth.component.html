@@ -3,7 +3,7 @@
   <p class="u-margin-bottom-small">
     Login and gain access to the rest of the site.
   </p>
-  @switch (this.currentAuthMode) { @case ('LOGIN') {
+  @switch (this.authService.currentAuthMode()) { @case (authModeEnum.login) {
   <h2 class="u-margin-bottom-tiny">Login</h2>
   <button class="base-button u-margin-bottom-tiny" (click)="onSwitchMode()">
     Switch to Register
@@ -37,7 +37,7 @@
       </li>
     </ul>
   </form>
-  } @case ('REGISTER') {
+  } @case (authModeEnum.register) {
   <h2 class="u-margin-bottom-tiny">Register</h2>
   <button class="base-button u-margin-bottom-tiny" (click)="onSwitchMode()">
     Switch to Login
@@ -95,11 +95,19 @@
       </li>
     </ul>
   </form>
-  } @case ('LOGOUT') {
+  } @case (authModeEnum.logout) {
   <h2 class="u-margin-bottom-tiny">Logged In</h2>
   <button class="base-button u-margin-bottom-tiny" (click)="logout()">
     Logout
   </button>
+  } @case (authModeEnum.logoutLoading) {
+  <h2 class="u-margin-bottom-tiny">Logging Out</h2>
+  } @case (authModeEnum.loginLoading) {
+  <h2 class="u-margin-bottom-tiny">Logging In</h2>
+  } @case (authModeEnum.registerLoading) {
+  <h2 class="u-margin-bottom-tiny">Registering</h2>
+  } @case (authModeEnum.error) {
+  <h2 class="u-margin-bottom-tiny">Error</h2>
   } }
 </div>
 @if(user$ | async) {

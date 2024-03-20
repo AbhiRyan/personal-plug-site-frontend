@@ -17,6 +17,8 @@ import { appActions } from '../../../store/app.actions';
 import { map, Subscription } from 'rxjs';
 import { appFeature } from '../../../store/app.reducers';
 import { CommonModule } from '@angular/common';
+import * as constants from '../../../app.constants';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -29,11 +31,13 @@ export class AuthComponent implements OnInit, OnDestroy {
   formBuilder = inject(FormBuilder);
   router = inject(Router);
   store = inject(Store);
-  currentAuthMode: AuthMode = AuthMode.login;
+  authService = inject(AuthService);
+  loadingMessage: string = constants.LOADING_MESSAGE;
   private subscription: Subscription | undefined;
   user$ = this.store.select(appFeature.selectAuthUser);
   userName$ = this.store.select(appFeature.selectAuthUserName);
   enabled: boolean = false;
+  authModeEnum = AuthMode;
 
   ngOnInit(): void {
     this.subscription = this.store
@@ -41,10 +45,10 @@ export class AuthComponent implements OnInit, OnDestroy {
       .pipe(
         map((user) => {
           if (user) {
-            this.currentAuthMode = AuthMode.logout;
+            this.authService.currentAuthMode.set(AuthMode.logout);
             return true;
           }
-          this.currentAuthMode = AuthMode.login;
+          this.authService.currentAuthMode.set(AuthMode.login);
           return false;
         })
       )
@@ -71,30 +75,33 @@ export class AuthComponent implements OnInit, OnDestroy {
   });
 
   public onSwitchMode(): void {
-    if (this.currentAuthMode === AuthMode.login) {
-      this.currentAuthMode = AuthMode.register;
+    if (this.authService.currentAuthMode() === AuthMode.login) {
+      this.authService.currentAuthMode.set(AuthMode.register);
       return;
     }
-    this.currentAuthMode = AuthMode.login;
+    this.authService.currentAuthMode.set(AuthMode.login);
   }
 
   public logout(): void {
+    // this.authService.currentAuthMode.set(AuthMode.loading);
     this.store.dispatch(appActions.logoutUser());
   }
 
   onSubmit(): void {
-    switch (this.currentAuthMode) {
+    switch (this.authService.currentAuthMode()) {
       case AuthMode.login:
+        // this.loadingMessage = constants.LOGIN_MESSAGE;
+        // this.authService.currentAuthMode.set(AuthMode.loading);
+        this.loadingMessage = '';
         this.store.dispatch(
           appActions.loginUser({
             authRequestDto: this.formLogin.value as AuthenticationRequestDto,
           })
         );
-        // this.store
-        //   .select(appFeature.selectAuthUser)
-        //   .pipe(map((user) => console.log('user from store: ', user)));
         break;
       case AuthMode.register:
+        // this.loadingMessage = constants.REGISTER_MESSAGE;
+        // this.authService.currentAuthMode.set(AuthMode.loading);
         this.store.dispatch(
           appActions.registerUser({
             registerRequestDto: this.userDtoFromRegisterForm(this.formRegister),
@@ -102,10 +109,10 @@ export class AuthComponent implements OnInit, OnDestroy {
         );
         break;
       case AuthMode.logout:
-        console.warn('Already logged in');
+        console.warn(constants.ALREADY_LOGGED_IN_MESSAGE);
         break;
       default:
-        console.warn('Invalid auth mode');
+        console.warn(constants.APP_ERROR_MESSAGE);
         break;
     }
   }

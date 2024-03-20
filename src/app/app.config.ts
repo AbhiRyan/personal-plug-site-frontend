@@ -12,6 +12,7 @@ import { provideState, provideStore } from '@ngrx/store';
 import { AuthEffects } from './store/app.effects';
 import { ApiCentralEffects } from './store/api-central.effects';
 import * as fromAppRducer from './store/app.reducers';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,5 +26,6 @@ export const appConfig: ApplicationConfig = {
     provideStore(),
     provideState(fromAppRducer.appFeature),
     provideEffects(AuthEffects, ApiCentralEffects),
+    provideAnimationsAsync(),
   ],
 };
