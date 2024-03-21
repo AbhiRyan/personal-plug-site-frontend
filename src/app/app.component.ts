@@ -1,9 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DefaultLayoutComponent } from './components/core-components/default-layout/default-layout.component';
-import { Store } from '@ngrx/store';
-import { appActions } from './store/app.actions';
-import { appFeature } from './store/app.reducers';
+import { AppStore } from './store/app.stroe';
+import { STATE_SIGNAL } from '@ngrx/signals/src/state-signal';
 
 @Component({
   selector: 'app-root',
@@ -14,13 +13,12 @@ import { appFeature } from './store/app.reducers';
 })
 export class AppComponent implements OnInit {
   title = 'personal-plug-site';
-  store = inject(Store);
+  store = inject(AppStore);
 
   ngOnInit(): void {
-    this.store.select(appFeature.selectAuthUser).subscribe((user) => {
-      if (!user) {
-        this.store.dispatch(appActions.refreshSession());
-      }
-    });
+    console.log(this.store.authState().user);
+    if (!this.store.authState().user) {
+      this.store.refreshSession();
+    }
   }
 }

@@ -15,7 +15,7 @@
       Login
     </button>
   </div>
-  @if (user$ | async) {
+  @if (store.authState().user) {
   <div>
     <button
       class="nav-button nav-button-icon nav-button-icon__user-page"
@@ -24,7 +24,7 @@
       User Page
     </button>
   </div>
-  } @if(isAdmin$|async) {
+  } @if(isAdmin) {
   <div>
     <button
       class="nav-button nav-button-icon nav-button-icon__admin"

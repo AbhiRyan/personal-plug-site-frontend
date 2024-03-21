@@ -1,5 +1,5 @@
 import { User } from '../user';
 
-export interface AuthState {
+export type AuthState = {
   user: User | null;
-}
+};

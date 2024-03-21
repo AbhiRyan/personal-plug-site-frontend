@@ -1,3 +1,3 @@
-export interface ApiCentralState {
+export type ApiCentralState = {
   testString: string | null;
-}
+};

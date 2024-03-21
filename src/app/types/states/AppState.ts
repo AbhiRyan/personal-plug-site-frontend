@@ -1,10 +1,12 @@
+import { AuthMode } from '../../enums/authMode';
 import { ApiCentralState } from './ApiCentralState';
 import { AuthState } from './authState';
 
-export interface AppState {
+export type AppState = {
   apiCentralState: ApiCentralState;
   authState: AuthState;
-}
+  authMode: AuthMode;
+};
 
 export const initialState: AppState = {
   apiCentralState: {
@@ -13,4 +15,5 @@ export const initialState: AppState = {
   authState: {
     user: null,
   },
+  authMode: AuthMode.login,
 };

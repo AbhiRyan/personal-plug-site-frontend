@@ -1,9 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { CommonModule } from '@angular/common';
-import { appFeature } from '../../../store/app.reducers';
-import { appActions } from '../../../store/app.actions';
 import { CanvasBoxComponent } from '../../sub-components/canvas-box/canvas-box.component';
+import { AppStore } from '../../../store/app.stroe';
 @Component({
   selector: 'app-user-landing',
   standalone: true,
@@ -12,12 +10,16 @@ import { CanvasBoxComponent } from '../../sub-components/canvas-box/canvas-box.c
   imports: [CommonModule, CanvasBoxComponent],
 })
 export class UserLandingComponent implements OnInit {
-  store = inject(Store);
-  testString$ = this.store.select(appFeature.selectTestString);
+  store = inject(AppStore);
+  testString$ = this.getTestString();
 
   public glbPath: string = '../../../../assets/Box_Bounce_01.glb';
 
   ngOnInit(): void {
-    this.store.dispatch(appActions.getTestString());
+    this.getTestString();
+  }
+
+  getTestString() {
+    return this.store.getTestString();
   }
 }

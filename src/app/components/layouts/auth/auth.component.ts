@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -12,13 +12,10 @@ import { AuthMode } from '../../../enums/authMode';
 import { AuthenticationRequestDto } from '../../../types/authenticationRequestDto';
 import { RegisterRequestDto } from '../../../types/registerRequestDto';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { appActions } from '../../../store/app.actions';
-import { map, Subscription } from 'rxjs';
-import { appFeature } from '../../../store/app.reducers';
 import { CommonModule } from '@angular/common';
 import * as constants from '../../../app.constants';
 import { AuthService } from '../../../services/auth.service';
+import { AppStore } from '../../../store/app.stroe';
 
 @Component({
   selector: 'app-auth',
@@ -27,39 +24,17 @@ import { AuthService } from '../../../services/auth.service';
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.scss',
 })
-export class AuthComponent implements OnInit, OnDestroy {
+export class AuthComponent {
   formBuilder = inject(FormBuilder);
   router = inject(Router);
-  store = inject(Store);
+  store = inject(AppStore);
   authService = inject(AuthService);
+
   loadingMessage: string = constants.LOADING_MESSAGE;
-  private subscription: Subscription | undefined;
-  user$ = this.store.select(appFeature.selectAuthUser);
-  userName$ = this.store.select(appFeature.selectAuthUserName);
-  enabled: boolean = false;
+  user = this.store.authState().user;
+  userName$ = this.user ? this.user.firstName + ' ' + this.user.lastName : '';
+  enabled = false;
   authModeEnum = AuthMode;
-
-  ngOnInit(): void {
-    this.subscription = this.store
-      .select(appFeature.selectAuthUser)
-      .pipe(
-        map((user) => {
-          if (user) {
-            this.authService.currentAuthMode.set(AuthMode.logout);
-            return true;
-          }
-          this.authService.currentAuthMode.set(AuthMode.login);
-          return false;
-        })
-      )
-      .subscribe();
-  }
-
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
 
   formLogin = this.formBuilder.group({
     email: ['', Validators.required],
@@ -75,38 +50,24 @@ export class AuthComponent implements OnInit, OnDestroy {
   });
 
   public onSwitchMode(): void {
-    if (this.authService.currentAuthMode() === AuthMode.login) {
-      this.authService.currentAuthMode.set(AuthMode.register);
+    if (this.getCurrentAuthMode() === AuthMode.login) {
+      this.store.setAuthMode(AuthMode.register);
       return;
     }
-    this.authService.currentAuthMode.set(AuthMode.login);
+    this.store.setAuthMode(AuthMode.login);
   }
 
   public logout(): void {
-    // this.authService.currentAuthMode.set(AuthMode.loading);
-    this.store.dispatch(appActions.logoutUser());
+    this.store.logoutUser();
   }
 
   onSubmit(): void {
-    switch (this.authService.currentAuthMode()) {
+    switch (this.getCurrentAuthMode()) {
       case AuthMode.login:
-        // this.loadingMessage = constants.LOGIN_MESSAGE;
-        // this.authService.currentAuthMode.set(AuthMode.loading);
-        this.loadingMessage = '';
-        this.store.dispatch(
-          appActions.loginUser({
-            authRequestDto: this.formLogin.value as AuthenticationRequestDto,
-          })
-        );
+        this.store.loginUser(this.formLogin.value as AuthenticationRequestDto);
         break;
       case AuthMode.register:
-        // this.loadingMessage = constants.REGISTER_MESSAGE;
-        // this.authService.currentAuthMode.set(AuthMode.loading);
-        this.store.dispatch(
-          appActions.registerUser({
-            registerRequestDto: this.userDtoFromRegisterForm(this.formRegister),
-          })
-        );
+        this.store.registerUser(this.formRegister.value as RegisterRequestDto);
         break;
       case AuthMode.logout:
         console.warn(constants.ALREADY_LOGGED_IN_MESSAGE);
@@ -138,5 +99,9 @@ export class AuthComponent implements OnInit, OnDestroy {
       email: form.get('email')?.value,
       password: form.get('password')?.value,
     };
+  }
+
+  getCurrentAuthMode(): AuthMode {
+    return this.store.authMode();
   }
 }

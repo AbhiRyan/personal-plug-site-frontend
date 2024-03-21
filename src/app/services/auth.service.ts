@@ -1,13 +1,12 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable, inject, signal } from '@angular/core';
+import { Inject, Injectable, inject } from '@angular/core';
 import { AuthenticationRequestDto } from '../types/authenticationRequestDto';
 import { AuthenticationResponceDto } from '../types/authenticationResponceDto';
-import { Observable } from 'rxjs';
+import { EMPTY, Observable, catchError, throwError } from 'rxjs';
 import { RegisterRequestDto } from '../types/registerRequestDto';
 import { environment } from '../../environments/environment';
 import { CookieService } from 'ngx-cookie-service';
-import { AuthMode } from '../enums/authMode';
 import * as constants from '../app.constants';
 
 @Injectable({
@@ -16,8 +15,6 @@ import * as constants from '../app.constants';
 export class AuthService {
   https = inject(HttpClient);
   cookieService = inject(CookieService);
-  public currentAuthMode = signal(AuthMode.login);
-  public loadingMessage = signal(constants.LOADING_MESSAGE);
   private inactivityTimeout: any;
 
   constructor(@Inject(DOCUMENT) private document: Document) {
@@ -26,8 +23,9 @@ export class AuthService {
     });
   }
 
-  public login(authRequest: AuthenticationRequestDto) {
-    this.currentAuthMode.set(AuthMode.loginLoading);
+  public login(
+    authRequest: AuthenticationRequestDto
+  ): Observable<AuthenticationResponceDto> {
     return this.https.post<AuthenticationResponceDto>(
       environment.API_URL + `/auth/user/authenticate`,
       authRequest,
@@ -36,7 +34,6 @@ export class AuthService {
   }
 
   public logout(): Observable<any> {
-    this.currentAuthMode.set(AuthMode.logoutLoading);
     return this.https.post(
       environment.API_URL + `/auth/user/logout`,
       {},
@@ -44,8 +41,9 @@ export class AuthService {
     );
   }
 
-  public register(regRequest: RegisterRequestDto) {
-    this.currentAuthMode.set(AuthMode.registerLoading);
+  public register(
+    regRequest: RegisterRequestDto
+  ): Observable<AuthenticationResponceDto> {
     return this.https.post<AuthenticationResponceDto>(
       environment.API_URL + `/auth/user/register`,
       regRequest,
@@ -54,12 +52,23 @@ export class AuthService {
   }
 
   public reloadSessionRefresh(): Observable<AuthenticationResponceDto | null> {
-    return this.https.get<AuthenticationResponceDto>(
-      environment.API_URL + `/auth/user/validateTokenAndRefreshSession`,
-      {
-        withCredentials: true,
-      }
-    );
+    return this.https
+      .get<AuthenticationResponceDto>(
+        environment.API_URL + `/auth/user/validateTokenAndRefreshSession`,
+        {
+          withCredentials: true,
+        }
+      )
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 403) {
+            console.debug('No session cookie found');
+            return EMPTY;
+          }
+          console.debug('Error refreshing session', error.message);
+          return EMPTY;
+        })
+      );
   }
 
   private resetInactivityTimeout() {
