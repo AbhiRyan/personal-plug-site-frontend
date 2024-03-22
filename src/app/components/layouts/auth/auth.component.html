@@ -95,20 +95,22 @@
       </li>
     </ul>
   </form>
-  } @case (authModeEnum.logoutLoading) {
-  <h2 class="u-margin-bottom-tiny">Logged In</h2>
+  } @case (authModeEnum.logout) {
+  <h2 class="u-margin-bottom-small">Logged In</h2>
   <button class="base-button u-margin-bottom-tiny" (click)="logout()">
     Logout
   </button>
-  } @case (authModeEnum.logout) {
-  <h2 class="u-margin-bottom-tiny">Logging Out</h2>
+  } @case (authModeEnum.logoutLoading) {
+  <app-spinner [message]="constants.LOGOUT_LOADING_MESSAGE"></app-spinner>
   } @case (authModeEnum.loginLoading) {
-  <h2 class="u-margin-bottom-tiny">Logging In</h2>
+  <app-spinner [message]="constants.LOGOUT_LOADING_MESSAGE"></app-spinner>
   } @case (authModeEnum.registerLoading) {
-  <h2 class="u-margin-bottom-tiny">Registering</h2>
+  <app-spinner [message]="constants.LOGOUT_LOADING_MESSAGE"></app-spinner>
   } @case (authModeEnum.error) {
-  <h2 class="u-margin-bottom-tiny">Error</h2>
-  } }
+  <app-error-message
+    [message]="constants.API_ERROR_MESSAGE"
+  ></app-error-message>
+  }}
 </div>
 @if (user) {
 <span>user: {{ userName$ }}</span>

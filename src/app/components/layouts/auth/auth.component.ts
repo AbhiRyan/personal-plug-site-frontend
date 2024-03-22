@@ -16,19 +16,27 @@ import { CommonModule } from '@angular/common';
 import * as constants from '../../../app.constants';
 import { AuthService } from '../../../services/auth.service';
 import { AppStore } from '../../../store/app.stroe';
+import { SpinnerComponent } from '../../sub-components/spinner/spinner.component';
+import { ErrorMessageComponent } from '../../sub-components/error-message/error-message.component';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.scss',
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    SpinnerComponent,
+    ErrorMessageComponent,
+  ],
 })
 export class AuthComponent {
   formBuilder = inject(FormBuilder);
   router = inject(Router);
   store = inject(AppStore);
   authService = inject(AuthService);
+  constants = constants;
 
   loadingMessage: string = constants.LOADING_MESSAGE;
   user = this.store.authState().user;

@@ -16,7 +16,7 @@ export class AppComponent implements OnInit {
   store = inject(AppStore);
 
   ngOnInit(): void {
-    console.log(this.store.authState().user);
+    console.debug(this.store.authState().user);
     if (!this.store.authState().user) {
       this.store.refreshSession();
     }

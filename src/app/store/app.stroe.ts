@@ -35,7 +35,7 @@ export const AppStore = signalStore(
               authState: { user: null },
               authMode: AuthMode.error,
             });
-            console.error(constants.REGISTER_ERROR_MESSAGE, error);
+            console.debug(constants.REGISTER_ERROR_MESSAGE, error);
           },
         });
       },
@@ -55,7 +55,7 @@ export const AppStore = signalStore(
               authState: { user: null },
               authMode: AuthMode.error,
             });
-            console.error(constants.LOGIN_ERROR_MESSAGE, error);
+            console.debug(constants.LOGIN_ERROR_MESSAGE, error);
           },
         });
       },
@@ -71,7 +71,7 @@ export const AppStore = signalStore(
           },
           error: (error: any) => {
             patchState(store, { authMode: AuthMode.error });
-            console.error(constants.LOGOUT_ERROR_MESSAGE, error);
+            console.debug(constants.LOGOUT_ERROR_MESSAGE, error);
           },
         });
       },
@@ -99,7 +99,7 @@ export const AppStore = signalStore(
             patchState(store, { apiCentralState: { testString: res.message } });
           },
           error: (error: any) => {
-            console.error(constants.GET_TESTSTRING_ERROR_MESSAGE, error);
+            console.debug(constants.GET_TESTSTRING_ERROR_MESSAGE, error);
           },
         });
       },

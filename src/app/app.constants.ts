@@ -20,5 +20,7 @@ export const LOGOUT_ERROR_MESSAGE =
   'There was an error during the logout process:-';
 export const GET_TESTSTRING_ERROR_MESSAGE =
   'There was an error during the getTestString process:-';
+export const API_ERROR_MESSAGE =
+  'There was an error processing your request, try again later';
 
 export const SESSION_COOKIE_NAME = 'jwt';
