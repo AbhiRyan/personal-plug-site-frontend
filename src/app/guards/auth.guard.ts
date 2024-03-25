@@ -5,32 +5,24 @@ import {
   RouterStateSnapshot,
 } from '@angular/router';
 import { Observable, map } from 'rxjs';
-import { Store } from '@ngrx/store';
-import { appFeature } from '../store/app.reducers';
+import { AppStore } from '../store/app.stroe';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthGuard {
-  store = inject(Store);
+  store = inject(AppStore);
   router = inject(Router);
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    return this.isLoggedin().pipe(
-      map((isLoggedIn) => {
-        if (!isLoggedIn) {
-          this.router.navigate(['/home']); // Navigate to home if not logged in
-        }
-        return isLoggedIn;
-      })
-    );
+    if (this.isLoggedin()) {
+      return true;
+    }
+    this.router.navigate(['/home']);
+    return false;
   }
 
-  isLoggedin(): Observable<boolean> {
-    return this.store.select(appFeature.selectAuthUser).pipe(
-      map((user) => {
-        return !!user;
-      })
-    );
+  isLoggedin(): boolean {
+    return this.store.authState().user !== null;
   }
 }

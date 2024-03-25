@@ -3,7 +3,7 @@
   <p class="u-margin-bottom-small">
     Login and gain access to the rest of the site.
   </p>
-  @switch (this.currentAuthMode) { @case ('LOGIN') {
+  @switch (getCurrentAuthMode()) { @case (authModeEnum.login) {
   <h2 class="u-margin-bottom-tiny">Login</h2>
   <button class="base-button u-margin-bottom-tiny" (click)="onSwitchMode()">
     Switch to Register
@@ -37,7 +37,7 @@
       </li>
     </ul>
   </form>
-  } @case ('REGISTER') {
+  } @case (authModeEnum.register) {
   <h2 class="u-margin-bottom-tiny">Register</h2>
   <button class="base-button u-margin-bottom-tiny" (click)="onSwitchMode()">
     Switch to Login
@@ -95,13 +95,23 @@
       </li>
     </ul>
   </form>
-  } @case ('LOGOUT') {
-  <h2 class="u-margin-bottom-tiny">Logged In</h2>
+  } @case (authModeEnum.logout) {
+  <h2 class="u-margin-bottom-small">Logged In</h2>
   <button class="base-button u-margin-bottom-tiny" (click)="logout()">
     Logout
   </button>
-  } }
+  } @case (authModeEnum.logoutLoading) {
+  <app-spinner [message]="constants.LOGOUT_LOADING_MESSAGE"></app-spinner>
+  } @case (authModeEnum.loginLoading) {
+  <app-spinner [message]="constants.LOGOUT_LOADING_MESSAGE"></app-spinner>
+  } @case (authModeEnum.registerLoading) {
+  <app-spinner [message]="constants.LOGOUT_LOADING_MESSAGE"></app-spinner>
+  } @case (authModeEnum.error) {
+  <app-error-message
+    [message]="constants.API_ERROR_MESSAGE"
+  ></app-error-message>
+  }}
 </div>
-@if(user$ | async) {
-<span>user: {{ userName$ | async }}</span>
+@if (user) {
+<span>user: {{ userName$ }}</span>
 }

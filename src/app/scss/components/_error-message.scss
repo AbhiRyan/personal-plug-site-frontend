@@ -1,0 +1,21 @@
+.error-container {
+  --val-circle-size: 15rem;
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  height: var(--val-circle-size);
+  width: var(--val-circle-size);
+}
+.error-text {
+  position: absolute;
+  width: 14rem;
+  // text-align: center;
+  color: var(--col-font-white);
+  font-size: 1.6rem;
+}
+
+.error-svg {
+  fill: var(--col-font-white);
+  fill-opacity: 0.1;
+}

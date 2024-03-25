@@ -1,0 +1,40 @@
+.spinner-container {
+  --val-circle-size: 15rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: var(--val-circle-size);
+  width: var(--val-circle-size);
+}
+.loading-text {
+  font-size: 1.6rem;
+  fill: var(--col-font-white);
+  margin-left: 2rem;
+}
+
+.spinner {
+  height: var(--val-circle-size);
+  width: var(--val-circle-size);
+
+  .path {
+    stroke: var(--col-font-white);
+    stroke-linecap: round;
+    animation: dash 1s linear infinite;
+  }
+  .circle {
+    stroke: var(--col-font-white);
+    stroke-width: 0.5;
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 50, 180;
+    stroke-dashoffset: -10;
+  }
+
+  100% {
+    stroke-dasharray: 50, 180;
+    stroke-dashoffset: -240;
+  }
+}

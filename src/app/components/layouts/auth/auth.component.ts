@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -12,50 +12,37 @@ import { AuthMode } from '../../../enums/authMode';
 import { AuthenticationRequestDto } from '../../../types/authenticationRequestDto';
 import { RegisterRequestDto } from '../../../types/registerRequestDto';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { appActions } from '../../../store/app.actions';
-import { map, Subscription } from 'rxjs';
-import { appFeature } from '../../../store/app.reducers';
 import { CommonModule } from '@angular/common';
+import * as constants from '../../../app.constants';
+import { AuthService } from '../../../services/auth.service';
+import { AppStore } from '../../../store/app.stroe';
+import { SpinnerComponent } from '../../sub-components/spinner/spinner.component';
+import { ErrorMessageComponent } from '../../sub-components/error-message/error-message.component';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.scss',
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    SpinnerComponent,
+    ErrorMessageComponent,
+  ],
 })
-export class AuthComponent implements OnInit, OnDestroy {
+export class AuthComponent {
   formBuilder = inject(FormBuilder);
   router = inject(Router);
-  store = inject(Store);
-  currentAuthMode: AuthMode = AuthMode.login;
-  private subscription: Subscription | undefined;
-  user$ = this.store.select(appFeature.selectAuthUser);
-  userName$ = this.store.select(appFeature.selectAuthUserName);
-  enabled: boolean = false;
+  store = inject(AppStore);
+  authService = inject(AuthService);
+  constants = constants;
 
-  ngOnInit(): void {
-    this.subscription = this.store
-      .select(appFeature.selectAuthUser)
-      .pipe(
-        map((user) => {
-          if (user) {
-            this.currentAuthMode = AuthMode.logout;
-            return true;
-          }
-          this.currentAuthMode = AuthMode.login;
-          return false;
-        })
-      )
-      .subscribe();
-  }
-
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
+  loadingMessage: string = constants.LOADING_MESSAGE;
+  user = this.store.authState().user;
+  userName$ = this.user ? this.user.firstName + ' ' + this.user.lastName : '';
+  enabled = false;
+  authModeEnum = AuthMode;
 
   formLogin = this.formBuilder.group({
     email: ['', Validators.required],
@@ -71,41 +58,30 @@ export class AuthComponent implements OnInit, OnDestroy {
   });
 
   public onSwitchMode(): void {
-    if (this.currentAuthMode === AuthMode.login) {
-      this.currentAuthMode = AuthMode.register;
+    if (this.getCurrentAuthMode() === AuthMode.login) {
+      this.store.setAuthMode(AuthMode.register);
       return;
     }
-    this.currentAuthMode = AuthMode.login;
+    this.store.setAuthMode(AuthMode.login);
   }
 
   public logout(): void {
-    this.store.dispatch(appActions.logoutUser());
+    this.store.logoutUser();
   }
 
   onSubmit(): void {
-    switch (this.currentAuthMode) {
+    switch (this.getCurrentAuthMode()) {
       case AuthMode.login:
-        this.store.dispatch(
-          appActions.loginUser({
-            authRequestDto: this.formLogin.value as AuthenticationRequestDto,
-          })
-        );
-        // this.store
-        //   .select(appFeature.selectAuthUser)
-        //   .pipe(map((user) => console.log('user from store: ', user)));
+        this.store.loginUser(this.formLogin.value as AuthenticationRequestDto);
         break;
       case AuthMode.register:
-        this.store.dispatch(
-          appActions.registerUser({
-            registerRequestDto: this.userDtoFromRegisterForm(this.formRegister),
-          })
-        );
+        this.store.registerUser(this.formRegister.value as RegisterRequestDto);
         break;
       case AuthMode.logout:
-        console.log('Already logged in');
+        console.warn(constants.ALREADY_LOGGED_IN_MESSAGE);
         break;
       default:
-        console.error('Invalid auth mode');
+        console.warn(constants.APP_ERROR_MESSAGE);
         break;
     }
   }
@@ -131,5 +107,9 @@ export class AuthComponent implements OnInit, OnDestroy {
       email: form.get('email')?.value,
       password: form.get('password')?.value,
     };
+  }
+
+  getCurrentAuthMode(): AuthMode {
+    return this.store.authMode();
   }
 }
